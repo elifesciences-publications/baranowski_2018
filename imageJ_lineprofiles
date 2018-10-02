@@ -1,0 +1,32 @@
+
+
+//This IMAGE J macro gets line profiles of user defined ROIs and saves them to csv files
+id = getImageID();
+Directory = getDirectory(id);
+//print(Directory);
+n=2; //number of channels
+//print(roiManager("count"));
+for(i=0 ; i<roiManager("count"); i++) {
+    run("Clear Results");
+    roiManager("select", i);
+    //selectWindow("Merged");
+    Stack.setChannel(2); //the channel you want to meaure
+   	time = (getSliceNumber()+1)/n; //for time measurment
+   	//time = getSliceNumber();
+    run("Profile Plot Options...", "width=450 height=200 font=12 minimum=0 maximum=0 draw draw_ticks interpolate subpixel");
+	run("Plot Profile"); 
+  	Plot.getValues(x, y); 
+  		for (j=0; j<x.length; j++) { 
+    		 setResult("x", j, x[j]); 
+    		 setResult("y", j, y[j]); 
+   			 setResult("time",j,time);
+  			updateResults;
+  		} 
+  	setOption("ShowRowNumbers", false); 
+  	updateResults; 
+	roiManager("select", i);
+	current = i+100;
+ 	saveAs("Results", Directory+current + ".txt");
+ 	//selectWindow("Plot of Merged");
+ 	close();
+ } 
